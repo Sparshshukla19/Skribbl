@@ -114,9 +114,13 @@ export default function Game({ roomState, roomId, socket, wordChoices, onSelectW
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
 
+    // Detect if it's a mobile touch event or standard mouse event
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
     return {
-      x: (e.clientX - rect.left) * scaleX,
-      y: (e.clientY - rect.top) * scaleY
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
     };
   };
 
@@ -280,7 +284,19 @@ export default function Game({ roomState, roomId, socket, wordChoices, onSelectW
               onMouseMove={draw}
               onMouseUp={stopDrawing}
               onMouseLeave={stopDrawing}
-              className={`w-full h-full block bg-slate-950 ${isDrawer && roomState.status === 'DRAWING' ? 'cursor-crosshair' : 'cursor-not-allowed'}`}
+              
+              // Mobile Touch Event Bindings
+              onTouchStart={(e) => {
+                startDrawing(e);
+              }}
+              onTouchMove={(e) => {
+                // Prevents the browser from dragging/scrolling the page while drawing
+                if (e.cancelable) e.preventDefault(); 
+                draw(e);
+              }}
+              onTouchEnd={stopDrawing}
+              
+              className={`w-full h-full block bg-slate-950 ${isDrawer && roomState.status === 'DRAWING' ? 'cursor-crosshair touch-none' : 'cursor-not-allowed'}`}
             />
 
             {/* OVERLAY MATRIX MAPPING FOR INTERIM SELECTION OR EVALUATION PHASES */}
