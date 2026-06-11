@@ -105,7 +105,7 @@ export default function Game({ roomState, roomId, socket, wordChoices, onSelectW
   }, [messages]);
 
   // Drawing event coordinate converters
-  const getCoordinates = (e) => {
+ const getCoordinates = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
